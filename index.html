@@ -44,6 +44,7 @@
   .link { font-size: 9px; color: var(--pink2); text-decoration: underline; cursor: pointer; padding: 6px; }
   .rl { font-size: 8px; line-height: 1.9; text-align: left; margin: 0 0 10px; color: var(--pale); }
   .rl b { color: var(--pink); font-weight: 400; }
+  .ri { height: 18px; width: 18px; object-fit: contain; vertical-align: middle; margin-right: 6px; }
 
   .card { border: 4px solid var(--pink); background: rgba(255,46,147,.07); padding: 10px; margin-bottom: 10px; text-align: left;
     display: flex; flex-direction: column; gap: 6px; }
@@ -98,13 +99,22 @@
   <h2>КАК ИГРАТЬ</h2>
   <div class="scroll">
     <p class="rl">Двигай пальцем влево-вправо, ловишь верхней частью тела. Раунд <b>30 секунд</b>. В выживании времени нет, играешь пока есть сердца.</p>
-    <p class="rl"><b>ЛОВИ:</b><br>💵 доллары +10<br>🥫 Ред Булл +25: 5 с ты бегаешь быстрее<br>💉 шмурдяк +40: щит от одной опасной штуки<br>💊 ксан +50: 5 с всё падает медленнее<br>🌈 марка +200: кроет!</p>
-    <p class="rl"><b>НЕ ЛОВИ:</b><br>💣 бомба: минус сердце<br>🚨 мигалка: 1,5 с стоишь на месте<br>🧾 штраф: минус 150 очков и сброс серии<br>Мигающие предметы исчезнут, не гонись за ними.</p>
-    <p class="rl"><b>СЕРДЦА:</b> теряешь за бомбу и за пропущенные ксан или шмурдяк. После потери 1,5 с неуязвимости.</p>
+    <p class="rl"><b>ЛОВИ:</b><br>
+      <img class="ri" src="img/dollar.png" alt="">гуап +10<br>
+      <img class="ri" src="img/redbull.png" alt="">Ред Булл +25: 5 с ты бегаешь быстрее<br>
+      <img class="ri" src="img/syringe.png" alt="">шмурдяк +40: щит от одной опасной штуки<br>
+      <img class="ri" src="img/xanax.png" alt="">ксан +50: 5 с всё падает медленнее<br>
+      <img class="ri" src="img/acid0.png" alt="">марка +200: кроет!</p>
+    <p class="rl"><b>НЕ ЛОВИ:</b><br>
+      <img class="ri" src="img/meth.png" alt="">метадон: минус сердце<br>
+      <img class="ri" src="img/opps.png" alt="">оппы: 1,5 с стоишь на месте<br>
+      <img class="ri" src="img/percent.png" alt="">проценты по кредитке: минус 150 очков и сброс серии<br>
+      Мигающие предметы исчезнут, не гонись за ними.</p>
+    <p class="rl"><b>СЕРДЦА:</b> теряешь за метадон и за пропущенные ксан или шмурдяк. После потери 1,5 с неуязвимости.</p>
     <p class="rl"><b>СЕРИЯ:</b> каждые 5 пойманных подряд добавляют +1 к множителю очков (до x8). Промах обнуляет.</p>
     <p class="rl"><b>ПЕРЕДОЗ:</b> шмурдяки и ксаны заполняют шкалу. Переполнил: 3 секунды управление наоборот и тряска.</p>
     <p class="rl"><b>КРОЕТ:</b> поймал марку: 8 секунд предметов втрое больше, очки x10, опасного нет, но управление плывёт. Марка падает очень быстро, ищи значок ! наверху.</p>
-    <p class="rl"><b>БОСС:</b> в конце раунда выходит босс и швыряет бомбы с долларами. Пройди без урона: +300.</p>
+    <p class="rl"><b>БОСС:</b> в конце раунда выходит босс и швыряет метадон вперемешку с гуапом. Между рядами всегда есть проход. Пройди без урона: +300.</p>
   </div>
   <button id="rulesBack" class="ghost">В меню</button>
 </div></div>
@@ -221,7 +231,7 @@
     { id: 'acid3',  name: 'Тройной приход',     desc: 'Поймай 3 марки за один раунд',          reward: 250, ok: (s, r) => r.acid >= 3 },
     { id: 'col5',   name: 'Полколлекции',       desc: 'Собери 5 разных марок',                 reward: 100, ok: (s) => s.stamps.length >= 5 },
     { id: 'col10',  name: 'Коллекционер',       desc: 'Собери все 10 марок',                   reward: 300, ok: (s) => s.stamps.length >= 10 },
-    { id: 'dollar', name: 'Денежный дождь',     desc: 'Поймай 100 долларов',                   reward: 60,  ok: (s) => s.totals.dollar >= 100 },
+    { id: 'dollar', name: 'Денежный дождь',     desc: 'Поймай 100 гуап',                   reward: 60,  ok: (s) => s.totals.dollar >= 100 },
     { id: 'redbull',name: 'Крылья',             desc: 'Поймай 50 Ред Буллов',                  reward: 60,  ok: (s) => s.totals.redbull >= 50 },
     { id: 'xanax',  name: 'Полное спокойствие', desc: 'Поймай 50 ксанов',                      reward: 60,  ok: (s) => s.totals.xanax >= 50 },
     { id: 'syringe',name: 'Шмурдяк-маньяк',     desc: 'Поймай 50 шмурдяков',                   reward: 60,  ok: (s) => s.totals.syringe >= 50 },
@@ -235,7 +245,7 @@
     { id: 'daily',  name: 'Дисциплина',         desc: 'Выполни все задания дня',               reward: 100, ok: (s) => s.dailyAll >= 1 },
   ];
   const DAILY_T = [
-    { id: 'dollar',  label: 'Поймай {n} долларов',      targets: [30, 45, 60],     reward: 40, mode: 'sum', val: (r) => r.counts.dollar || 0 },
+    { id: 'dollar',  label: 'Поймай {n} гуап',            targets: [30, 45, 60],     reward: 40, mode: 'sum', val: (r) => r.counts.dollar || 0 },
     { id: 'redbull', label: 'Поймай {n} Ред Буллов',    targets: [8, 12, 16],      reward: 50, mode: 'sum', val: (r) => r.counts.redbull || 0 },
     { id: 'syringe', label: 'Поймай {n} шмурдяков',     targets: [8, 12],          reward: 50, mode: 'sum', val: (r) => r.counts.syringe || 0 },
     { id: 'xanax',   label: 'Поймай {n} ксанов',        targets: [8, 12, 16],      reward: 50, mode: 'sum', val: (r) => r.counts.xanax || 0 },
@@ -409,7 +419,7 @@
   const img = new Image();
   img.src = 'player.png';
   const pics = {};
-  ['dollar', 'redbull', 'syringe', 'xanax'].forEach((n) => { const i = new Image(); i.src = 'img/' + n + '.png'; pics[n] = i; });
+  ['dollar', 'redbull', 'syringe', 'xanax', 'meth', 'opps', 'percent'].forEach((n) => { const i = new Image(); i.src = 'img/' + n + '.png'; pics[n] = i; });
   const acidImgs = [];
   for (let k = 0; k < 10; k++) { const i = new Image(); i.src = 'img/acid' + k + '.png'; acidImgs.push(i); }
 
@@ -504,14 +514,26 @@
   function bossY() { return 125 * Math.max(0.8, S); }
   function bossX(t) { return W / 2 + Math.sin(t * 1.4) * W * 0.32; }
   function bossVolley() {
-    const n = Math.max(5, Math.floor(W / (56 * S)));
-    const slots = []; for (let i = 0; i < n; i++) slots.push(i);
-    const take = (k) => { const out = []; for (let i = 0; i < k; i++) out.push(slots.splice(Math.floor(Math.random() * slots.length), 1)[0]); return out; };
-    const bombs = take(2 + (boss.vol >= 3 ? 1 : 0)), cash = take(2);
-    const y0 = bossY() + 34 * S, vy = 235 * (H / 700);
-    const mk = (slot, t, pts) => items.push({ t, r: t.r * S, x: (slot + 0.5) * W / n, y: y0, age: 0, vy, rot: 0, vr: 0, bossItem: true, pts });
-    bombs.forEach((s) => mk(s, T.bomb));
-    cash.forEach((s) => mk(s, T.dollar, 30));
+    const n = Math.max(6, Math.floor(W / (56 * S)));
+    const slotW = W / n;
+    const b = playerBox();
+    const halfW = b.pw * 0.36 * (1 + 0.15 * save.up.wide);
+    // ширина безопасного прохода в клетках: игрок + запас
+    const c = Math.min(n - 2, Math.ceil((2 * halfW + 30 * S) / slotW) + 1);
+    const maxStart = n - c;
+    let s0 = boss.corr === undefined ? Math.floor(Math.random() * (maxStart + 1))
+      : Math.max(0, Math.min(maxStart, boss.corr + Math.floor(Math.random() * 5) - 2));
+    boss.corr = s0;
+    const free = [];
+    for (let i = 0; i < n; i++) if (i < s0 || i >= s0 + c) free.push(i);
+    const nb = Math.min(free.length, 2 + (boss.vol >= 3 ? 1 : 0));
+    const bombs = [];
+    for (let i = 0; i < nb; i++) bombs.push(free.splice(Math.floor(Math.random() * free.length), 1)[0]);
+    const y0 = bossY() + 34 * S, vy = 200 * (H / 700);
+    const mk = (slot, t, pts) => items.push({ t, r: t.r * S, x: (slot + 0.5) * slotW, y: y0, age: 0, vy, rot: 0, vr: 0, bossItem: true, pts });
+    bombs.forEach((sl) => mk(sl, T.bomb));
+    mk(s0 + Math.floor(c / 2), T.dollar, 30);
+    if (c >= 3) mk(s0 + Math.floor(c / 2) - 1, T.dollar, 30);
     boss.vol++;
   }
   function bossFinish(win) {
@@ -545,8 +567,8 @@
     }
     combo = 0;
     if (boss) boss.hit = true;
-    if (it.t.id === 'bomb') { addFloat(it.x, it.y, 'БАХ!', '#ff2e93'); burst(it.x, it.y, 24, false); loseLife(); }
-    else if (it.t.id === 'siren') { stun = 1.5; shake = 0.3; rs.noHit = false; addFloat(it.x, it.y, 'ТОРМОЗНУЛИ', '#ff2e93'); haptic('bad'); }
+    if (it.t.id === 'bomb') { addFloat(it.x, it.y, 'МЕТАДОН!', '#ff2e93'); burst(it.x, it.y, 24, false); loseLife(); }
+    else if (it.t.id === 'siren') { stun = 1.5; shake = 0.3; rs.noHit = false; addFloat(it.x, it.y, 'ОППЫ!', '#ff2e93'); haptic('bad'); }
     else { score = Math.max(0, score - 150); rs.noHit = false; addFloat(it.x, it.y, '-150', '#ff2e93'); haptic('bad'); }
   }
   function catchGood(it) {
@@ -579,7 +601,7 @@
   }
 
   function playerBox() {
-    const ph = Math.min(H * 0.27, 300);
+    const ph = Math.min(H * 0.215, 240);
     const pw = img.width ? ph * img.width / img.height : ph * 0.83;
     return { ph, pw, top: H - ph - 4, left: player.x - pw / 2 };
   }
@@ -623,7 +645,7 @@
       }
       if (boss) {
         boss.next -= dt;
-        if (boss.next <= 0) { bossVolley(); boss.next = 1.35; }
+        if (boss.next <= 0) { bossVolley(); boss.next = 1.5; }
         if (mode === 'survival' && el >= boss.end) { bossFinish(true); nextBossAt = el + 50; }
       }
 
@@ -652,7 +674,7 @@
     // предметы
     const b = playerBox();
     const catchTop = b.top + b.ph * 0.05, catchBottom = b.top + b.ph * 0.5;
-    const halfW = b.pw * 0.42 * (1 + 0.15 * save.up.wide);
+    const halfW = b.pw * 0.36 * (1 + 0.15 * save.up.wide);
     for (let i = items.length - 1; i >= 0; i--) {
       const it = items[i];
       const d = dt * ts;
@@ -664,7 +686,7 @@
         if (it.x > W - it.r) { it.x = W - it.r; it.vx = -Math.abs(it.vx); }
       }
       if (it.vanishY && it.y >= it.vanishY) { items.splice(i, 1); continue; }
-      const inX = Math.abs(it.x - player.x) < halfW + it.r * 0.4;
+      const inX = Math.abs(it.x - player.x) < (it.t.danger ? halfW * 0.85 + it.r * 0.15 : halfW + it.r * 0.4);
       const inY = it.y + it.r * 0.6 > catchTop && it.y < catchBottom;
       if (running && inX && inY) {
         items.splice(i, 1);
@@ -734,11 +756,17 @@
       drawPic(it.img, r * 2.4);
     } else if (it.t.danger) {
       const pulse = 0.6 + 0.4 * Math.sin(t * 10);
-      ctx.fillStyle = `rgba(255,46,147,${0.25 * pulse})`;
-      ctx.fillRect(-r * 1.2, -r * 1.2, r * 2.4, r * 2.4);
-      ctx.strokeStyle = `rgba(255,46,147,${0.9 * pulse})`; ctx.lineWidth = 3;
-      ctx.strokeRect(-r * 1.2, -r * 1.2, r * 2.4, r * 2.4);
-      emoji(id === 'bomb' ? '💣' : id === 'siren' ? '🚨' : '🧾', r * 1.9);
+      const im = id === 'bomb' ? pics.meth : id === 'siren' ? pics.opps : pics.percent;
+      const size = id === 'bomb' ? r * 3.0 : id === 'siren' ? r * 2.6 : r * 3.3;
+      if (im.complete && im.naturalWidth) {
+        const k = size / Math.max(im.naturalWidth, im.naturalHeight);
+        const w = im.naturalWidth * k, h = im.naturalHeight * k;
+        ctx.shadowColor = '#ff2e93'; ctx.shadowBlur = 14 * pulse;
+        ctx.drawImage(im, -w / 2, -h / 2, w, h);
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = `rgba(255,46,147,${0.6 + 0.4 * pulse})`; ctx.lineWidth = 3;
+        ctx.strokeRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
+      }
     } else {
       ctx.rotate(it.rot * 0.2);
       if (rainbow > 0) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 14; }
@@ -806,7 +834,7 @@
       ctx.beginPath(); ctx.arc(cx, cy, rr, 0, 6.28); ctx.stroke();
       ctx.fillStyle = 'rgba(255,46,147,.12)'; ctx.fill();
     }
-    if (stun > 0) { ctx.save(); ctx.translate(player.x, b.top - 12 * S); emoji('🚨', 26 * S); ctx.restore(); }
+    if (stun > 0) { ctx.save(); ctx.translate(player.x, b.top - 12 * S); ctx.translate(0, -8 * S); drawPic(pics.opps, 40 * S); ctx.restore(); }
   }
 
   const HEART = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
@@ -860,7 +888,7 @@
     if (boost > 0) chip('ЭНЕРГИЯ ' + Math.ceil(boost) + 'c');
     if (slow > 0) chip('ЗАМЕДЛ. ' + Math.ceil(slow) + 'c');
     if (shield) chip('ЩИТ');
-    if (stun > 0) chip('ТОРМОЗ');
+    if (stun > 0) chip('ОППЫ');
     if (dazed > 0) { ctx.fillStyle = '#ff2e93'; chip('ПЕРЕДОЗ ' + Math.ceil(dazed) + 'c'); }
     ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
   }
