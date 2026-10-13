@@ -3,123 +3,159 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Лови!</title>
+<title>/fLeX.Жопа)</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-  html, body { margin: 0; height: 100%; background: #0b0614; overflow: hidden; touch-action: none;
+  :root {
+    --bg: #0a0008; --pink: #ff2e93; --pink2: #ff8fc8; --pale: #ffd1ea; --dark: #3b0a2a; --mid: #7a1650;
+  }
+  html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; touch-action: none;
     user-select: none; -webkit-user-select: none; font-family: 'Press Start 2P', monospace; line-height: 1.5; }
   canvas { display: block; width: 100%; height: 100%; }
 
-  .overlay { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center;
-    justify-content: center; gap: 14px; background: rgba(8, 4, 16, .88); color: #fff; text-align: center;
-    padding: 18px 14px; box-sizing: border-box; font-size: 11px; }
+  .overlay { position: fixed; inset: 0; display: none; background: rgba(10, 0, 8, .9); color: #fff; text-align: center;
+    padding: 18px 14px; box-sizing: border-box; font-size: 11px; overflow-y: auto; touch-action: pan-y; }
   .overlay.show { display: flex; }
-  .scroll { width: 100%; max-width: 440px; max-height: 66vh; overflow-y: auto; touch-action: pan-y;
-    -webkit-overflow-scrolling: touch; box-sizing: border-box; }
+  .inner { margin: auto; display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 440px; }
+  .scroll { width: 100%; max-height: 58vh; overflow-y: auto; touch-action: pan-y; -webkit-overflow-scrolling: touch; box-sizing: border-box; }
 
-  h1 { margin: 0; font-size: 40px; font-weight: 400; letter-spacing: 2px; color: #ffd23f;
-    text-shadow: 4px 4px 0 #ff3d6e, 8px 8px 0 #36c8ff; animation: wob 2s steps(2) infinite; }
+  h1 { margin: 0; font-size: min(26px, 6.6vw); font-weight: 400; color: #fff; white-space: nowrap;
+    text-shadow: 3px 3px 0 var(--pink), 6px 6px 0 var(--mid); animation: wob 2s steps(2) infinite; }
   @keyframes wob { 50% { transform: translateY(-3px); } }
-  h2 { margin: 0; font-size: 18px; font-weight: 400; color: #ffd23f; text-shadow: 3px 3px 0 #ff3d6e; }
+  h2 { margin: 0; font-size: 18px; font-weight: 400; color: #fff; text-shadow: 3px 3px 0 var(--pink); }
 
-  button { font: inherit; font-size: 12px; color: #12061f; background: #ffd23f; border: 0; border-radius: 0;
+  button { font: inherit; font-size: 12px; color: var(--bg); background: var(--pink); border: 0; border-radius: 0;
     padding: 14px 20px; cursor: pointer; text-transform: uppercase;
-    box-shadow: inset -4px -4px 0 rgba(0,0,0,.28), inset 4px 4px 0 rgba(255,255,255,.4), 0 4px 0 #8a6a00; }
-  button:active { transform: translateY(3px); box-shadow: inset -4px -4px 0 rgba(0,0,0,.28), inset 4px 4px 0 rgba(255,255,255,.4); }
-  button.alt { background: #36c8ff; box-shadow: inset -4px -4px 0 rgba(0,0,0,.28), inset 4px 4px 0 rgba(255,255,255,.4), 0 4px 0 #0b6a91; }
-  button.ghost { background: #8a7fa3; box-shadow: inset -4px -4px 0 rgba(0,0,0,.28), inset 4px 4px 0 rgba(255,255,255,.3), 0 4px 0 #4a4160; }
-  button.green { background: #7dff5c; box-shadow: inset -4px -4px 0 rgba(0,0,0,.28), inset 4px 4px 0 rgba(255,255,255,.4), 0 4px 0 #2d8a14; }
+    box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35), 0 4px 0 var(--mid); }
+  button:active { transform: translateY(3px); box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35); }
+  button.alt { background: var(--dark); color: var(--pale); outline: 3px solid var(--pink); outline-offset: -3px;
+    box-shadow: 0 4px 0 #1c0414; }
+  button.ghost { background: #4a2a3d; color: var(--pale); box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.15), 0 4px 0 #1c0414; }
+  button.main { background: var(--pale); box-shadow: inset -4px -4px 0 rgba(0,0,0,.2), inset 4px 4px 0 rgba(255,255,255,.6), 0 4px 0 var(--pink); font-size: 16px; }
   button:disabled { opacity: .45; }
-  .menu-btns { display: flex; flex-direction: column; gap: 14px; width: 250px; }
-  .menu-btns button { font-size: 14px; }
+  .menu-btns { display: flex; flex-direction: column; gap: 12px; width: 260px; }
+  .menu-btns button { font-size: 13px; }
   .row-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-  .stats { display: flex; gap: 18px; font-size: 11px; color: #ffd23f; flex-wrap: wrap; justify-content: center; }
-  .rules { display: grid; grid-template-columns: auto auto; gap: 6px 14px; font-size: 9px; text-align: left; }
-  .rules span { display: flex; align-items: center; gap: 8px; }
-  .rules img { height: 22px; width: 22px; object-fit: contain; }
-  .rules b { color: #ffd23f; font-weight: 400; text-align: right; }
-  .hint { font-size: 8px; line-height: 1.7; opacity: .7; max-width: 300px; }
+  .stats { display: flex; gap: 14px; font-size: 10px; color: var(--pink2); flex-wrap: wrap; justify-content: center; }
+  .link { font-size: 9px; color: var(--pink2); text-decoration: underline; cursor: pointer; padding: 6px; }
+  .rl { font-size: 8px; line-height: 1.9; text-align: left; margin: 0 0 10px; color: var(--pale); }
+  .rl b { color: var(--pink); font-weight: 400; }
 
-  .card { border: 4px solid #fff; background: rgba(255,255,255,.07); padding: 10px; margin-bottom: 10px; text-align: left;
+  .card { border: 4px solid var(--pink); background: rgba(255,46,147,.07); padding: 10px; margin-bottom: 10px; text-align: left;
     display: flex; flex-direction: column; gap: 6px; }
-  .card.done { border-color: #7dff5c; background: rgba(125,255,92,.12); }
+  .card.done { border-color: var(--pale); background: rgba(255,46,147,.25); }
   .card.locked { opacity: .65; }
-  .card .t { font-size: 10px; color: #ffd23f; }
+  .card .t { font-size: 10px; color: var(--pink2); }
   .card .d { font-size: 8px; line-height: 1.7; opacity: .85; }
   .card .r { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 9px; }
   .card button { font-size: 9px; padding: 9px 12px; }
-  .pips { letter-spacing: 3px; color: #7dff5c; font-size: 12px; }
-  .sec { font-size: 9px; color: #36c8ff; text-align: left; margin: 4px 0 8px; }
+  .pips { letter-spacing: 3px; color: var(--pink); font-size: 12px; }
+  .sec { font-size: 9px; color: var(--pink); text-align: left; margin: 4px 0 8px; }
+  .bar { height: 10px; background: var(--dark); border: 2px solid var(--pink); }
+  .bar i { display: block; height: 100%; background: var(--pink); }
 
   .stamps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
-  .stamps div { background: rgba(255,255,255,.08); border: 3px solid #555; height: 52px; display: flex; align-items: center; justify-content: center; }
-  .stamps div.got { border-color: #ffd23f; }
+  .stamps div { background: rgba(255,255,255,.08); border: 3px solid #4a2a3d; height: 52px; display: flex; align-items: center; justify-content: center; }
+  .stamps div.got { border-color: var(--pink); }
   .stamps img { max-width: 100%; max-height: 100%; }
   .stamps div:not(.got) img { filter: grayscale(1) brightness(.12); }
 
-  .big { font-size: 34px; color: #ffd23f; text-shadow: 3px 3px 0 #ff3d6e; }
-  .small { font-size: 10px; opacity: .85; }
-  .newach { font-size: 9px; color: #7dff5c; line-height: 1.8; max-width: 320px; }
+  .big { font-size: 34px; color: #fff; text-shadow: 3px 3px 0 var(--pink); }
+  .small { font-size: 10px; opacity: .9; }
+  .newach { font-size: 9px; color: var(--pink2); line-height: 1.8; max-width: 330px; }
 
-  #toast { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); background: #7dff5c; color: #12061f;
-    padding: 10px 14px; font-size: 9px; border: 3px solid #12061f; display: none; z-index: 10; text-align: center; max-width: 90vw; }
+  #pauseBtn { position: fixed; right: 10px; top: 46px; width: 38px; height: 38px; padding: 0; display: none; z-index: 5;
+    font-size: 14px; letter-spacing: -2px; }
+  #toast { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); background: var(--pink); color: var(--bg);
+    padding: 10px 14px; font-size: 9px; border: 3px solid var(--bg); display: none; z-index: 10; text-align: center; max-width: 90vw; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<button id="pauseBtn" class="alt">II</button>
 <div id="toast"></div>
 
 <!-- ГЛАВНОЕ МЕНЮ -->
-<div class="overlay show" id="menu">
-  <h1>ЛОВИ!</h1>
+<div class="overlay show" id="menu"><div class="inner">
+  <h1>/fLeX.Жопа)</h1>
   <div class="stats"><span id="mCoins"></span><span id="mBest"></span></div>
   <div class="menu-btns">
-    <button id="play" class="green">Играть</button>
+    <button id="play" class="main">Флексить</button>
+    <button id="playS">Выживание</button>
+    <button id="toDaily" class="alt">Задания</button>
     <button id="toShop" class="alt">Магазин</button>
-    <button id="toAch">Достижения</button>
+    <button id="toAch" class="alt">Достижения</button>
   </div>
-  <div class="rules">
-    <span><img src="img/dollar.png" alt="">Доллары</span><b>+10</b>
-    <span><img src="img/redbull.png" alt="">Ред Булл</span><b>+25</b>
-    <span><img src="img/syringe.png" alt="">Шмурдяк</span><b>+40</b>
-    <span><img src="img/xanax.png" alt="">Ксан</span><b>+50</b>
-    <span><img src="img/acid0.png" alt="">Марка</span><b>+200</b>
+  <div class="link" id="toRules">Как играть</div>
+</div></div>
+
+<!-- ПРАВИЛА -->
+<div class="overlay" id="rules"><div class="inner">
+  <h2>КАК ИГРАТЬ</h2>
+  <div class="scroll">
+    <p class="rl">Двигай пальцем влево-вправо, ловишь верхней частью тела. Раунд <b>30 секунд</b>. В выживании времени нет, играешь пока есть сердца.</p>
+    <p class="rl"><b>ЛОВИ:</b><br>💵 доллары +10<br>🥫 Ред Булл +25: 5 с ты бегаешь быстрее<br>💉 шмурдяк +40: щит от одной опасной штуки<br>💊 ксан +50: 5 с всё падает медленнее<br>🌈 марка +200: кроет!</p>
+    <p class="rl"><b>НЕ ЛОВИ:</b><br>💣 бомба: минус сердце<br>🚨 мигалка: 1,5 с стоишь на месте<br>🧾 штраф: минус 150 очков и сброс серии<br>Мигающие предметы исчезнут, не гонись за ними.</p>
+    <p class="rl"><b>СЕРДЦА:</b> теряешь за бомбу и за пропущенные ксан или шмурдяк. После потери 1,5 с неуязвимости.</p>
+    <p class="rl"><b>СЕРИЯ:</b> каждые 5 пойманных подряд добавляют +1 к множителю очков (до x8). Промах обнуляет.</p>
+    <p class="rl"><b>ПЕРЕДОЗ:</b> шмурдяки и ксаны заполняют шкалу. Переполнил: 3 секунды управление наоборот и тряска.</p>
+    <p class="rl"><b>КРОЕТ:</b> поймал марку: 8 секунд предметов втрое больше, очки x10, опасного нет, но управление плывёт. Марка падает очень быстро, ищи значок ! наверху.</p>
+    <p class="rl"><b>БОСС:</b> в конце раунда выходит босс и швыряет бомбы с долларами. Пройди без урона: +300.</p>
   </div>
-  <div class="hint">Марка падает 1–3 раза за раунд и летит очень быстро. Поймал: радуга, предметов x3, очки x10. Двигай пальцем.</div>
-</div>
+  <button id="rulesBack" class="ghost">В меню</button>
+</div></div>
+
+<!-- ЗАДАНИЯ -->
+<div class="overlay" id="daily"><div class="inner">
+  <h2>ЗАДАНИЯ ДНЯ</h2>
+  <div class="small">Обновляются каждый день</div>
+  <div class="scroll" id="dailyList"></div>
+  <button id="dailyBack" class="ghost">В меню</button>
+</div></div>
 
 <!-- МАГАЗИН -->
-<div class="overlay" id="shop">
+<div class="overlay" id="shop"><div class="inner">
   <h2>МАГАЗИН</h2>
   <div class="stats"><span id="sCoins"></span></div>
   <div class="scroll" id="shopList"></div>
   <button id="shopBack" class="ghost">В меню</button>
-</div>
+</div></div>
 
 <!-- ДОСТИЖЕНИЯ -->
-<div class="overlay" id="ach">
+<div class="overlay" id="ach"><div class="inner">
   <h2>ДОСТИЖЕНИЯ</h2>
   <div class="stats"><span id="aCount"></span></div>
   <div class="scroll" id="achList"></div>
   <button id="achBack" class="ghost">В меню</button>
-</div>
+</div></div>
+
+<!-- ПАУЗА -->
+<div class="overlay" id="pause"><div class="inner">
+  <h2>ПАУЗА</h2>
+  <div class="menu-btns">
+    <button id="resume" class="main">Продолжить</button>
+    <button id="quit" class="ghost">В меню</button>
+  </div>
+  <div class="hint small">Если выйти, раунд не засчитается</div>
+</div></div>
 
 <!-- КОНЕЦ РАУНДА -->
-<div class="overlay" id="end">
+<div class="overlay" id="end"><div class="inner">
+  <div class="small" id="endReason"></div>
   <div class="small">Твой счёт</div>
   <div class="big" id="finalScore">0</div>
   <div class="small" id="bestLine"></div>
   <div class="small" id="earned"></div>
   <div class="newach" id="newAch"></div>
   <div class="row-btns">
-    <button id="again" class="green">Ещё раз</button>
+    <button id="again" class="main">Ещё раз</button>
     <button id="toMenu" class="ghost">В меню</button>
   </div>
-</div>
+</div></div>
 
 <script>
 (function () {
@@ -127,12 +163,13 @@
   if (tg) {
     try { tg.ready(); tg.expand(); } catch (e) {}
     try { tg.disableVerticalSwipes(); } catch (e) {}
-    try { tg.setHeaderColor('#0b0614'); tg.setBackgroundColor('#0b0614'); } catch (e) {}
+    try { tg.setHeaderColor('#0a0008'); tg.setBackgroundColor('#0a0008'); } catch (e) {}
   }
   const haptic = (kind) => {
     try {
       if (!tg || !tg.HapticFeedback) return;
       if (kind === 'big') tg.HapticFeedback.notificationOccurred('success');
+      else if (kind === 'bad') tg.HapticFeedback.notificationOccurred('error');
       else tg.HapticFeedback.impactOccurred('light');
     } catch (e) {}
   };
@@ -142,17 +179,17 @@
   // ================= СОХРАНЕНИЕ =================
   const KEY = 'catch_save_v2';
   const defSave = () => ({
-    best: 0, coins: 0, rounds: 0,
+    best: 0, bestS: 0, coins: 0, rounds: 0,
     totals: { dollar: 0, redbull: 0, syringe: 0, xanax: 0, acid: 0 },
-    stamps: [], up: { wide: 0, time: 0, trip: 0 },
-    theme: 'city', themes: ['city'], ach: {}, bought: false,
+    stamps: [], up: { wide: 0, time: 0, trip: 0, heart: 0 },
+    theme: 'city', themes: ['city'], ach: {}, bought: false, dailyAll: 0, daily: null,
   });
   let save = defSave();
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
-      const o = JSON.parse(raw), d = defSave();
-      save = Object.assign(d, o);
+      const o = JSON.parse(raw);
+      save = Object.assign(defSave(), o);
       save.totals = Object.assign(defSave().totals, o.totals || {});
       save.up = Object.assign(defSave().up, o.up || {});
     } else {
@@ -161,34 +198,94 @@
   } catch (e) {}
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
 
-  // ================= МАГАЗИН / ДОСТИЖЕНИЯ: ДАННЫЕ =================
+  // ================= ДАННЫЕ: МАГАЗИН, ДОСТИЖЕНИЯ, ЗАДАНИЯ =================
   const UPS = [
-    { id: 'wide', name: 'Широкие руки', desc: 'Ловишь шире: +15% за уровень', costs: [100, 250, 500] },
-    { id: 'time', name: 'Больше времени', desc: '+5 секунд к раунду за уровень', costs: [150, 300, 600] },
-    { id: 'trip', name: 'Долгий приход', desc: 'Радуга дольше на 2 секунды за уровень', costs: [200, 400, 800] },
+    { id: 'wide',  name: 'Широкие руки',     desc: 'Ловишь шире: +15% за уровень',           costs: [100, 250, 500] },
+    { id: 'time',  name: 'Больше времени',   desc: '+5 секунд к раунду за уровень',          costs: [150, 300, 600] },
+    { id: 'trip',  name: 'Долгий приход',    desc: 'Кроет дольше на 2 секунды за уровень',   costs: [200, 400, 800] },
+    { id: 'heart', name: 'Запасное сердце',  desc: '+1 сердце в начале раунда',              costs: [300, 700] },
   ];
   const THEMES = {
-    city:   { name: 'Ночной город', cost: 0,   top: '#0b0614', bot: '#2a0f45', lamp: '255,170,60' },
-    sunset: { name: 'Закат',        cost: 300, top: '#240b36', bot: '#c31432', lamp: '255,120,200' },
-    matrix: { name: 'Матрица',      cost: 300, top: '#000a03', bot: '#04451c', lamp: '60,255,120' },
+    city:   { name: 'Ночной город',  cost: 0,   top: '#050004', bot: '#33081f', lamp: '255,46,147' },
+    sunset: { name: 'Розовый закат', cost: 300, top: '#14000d', bot: '#b0125f', lamp: '255,143,200' },
+    neon:   { name: 'Неон',          cost: 300, top: '#000000', bot: '#1d0016', lamp: '255,209,234' },
   };
   const ACH = [
-    { id: 'first',  name: 'Первый раунд',      desc: 'Сыграй один раунд',                    reward: 20,  ok: (s) => s.rounds >= 1 },
-    { id: 'play10', name: 'Постоянный клиент', desc: 'Сыграй 10 раундов',                    reward: 100, ok: (s) => s.rounds >= 10 },
-    { id: 's500',   name: 'Разогрелся',        desc: 'Набери 500 очков за раунд',            reward: 50,  ok: (s) => s.best >= 500 },
-    { id: 's2000',  name: 'Две тысячи',        desc: 'Набери 2000 очков за раунд',           reward: 100, ok: (s) => s.best >= 2000 },
-    { id: 's10000', name: 'Лютый рекорд',      desc: 'Набери 10000 очков за раунд',          reward: 300, ok: (s) => s.best >= 10000 },
-    { id: 'acid1',  name: 'Приход',            desc: 'Поймай свою первую марку',             reward: 50,  ok: (s) => s.totals.acid >= 1 },
-    { id: 'acid3',  name: 'Тройной приход',    desc: 'Поймай 3 марки за один раунд',         reward: 150, ok: (s, r) => r.acid >= 3 },
-    { id: 'col5',   name: 'Полколлекции',      desc: 'Собери 5 разных марок',                reward: 100, ok: (s) => s.stamps.length >= 5 },
-    { id: 'col10',  name: 'Коллекционер',      desc: 'Собери все 10 марок',                  reward: 300, ok: (s) => s.stamps.length >= 10 },
-    { id: 'dollar', name: 'Денежный дождь',    desc: 'Поймай 100 долларов',                  reward: 60,  ok: (s) => s.totals.dollar >= 100 },
-    { id: 'redbull',name: 'Крылья',            desc: 'Поймай 50 Ред Буллов',                 reward: 60,  ok: (s) => s.totals.redbull >= 50 },
-    { id: 'xanax',  name: 'Полное спокойствие',desc: 'Поймай 50 ксанов',                     reward: 60,  ok: (s) => s.totals.xanax >= 50 },
-    { id: 'syringe',name: 'Шмурдяк-маньяк',    desc: 'Поймай 50 шмурдяков',                  reward: 60,  ok: (s) => s.totals.syringe >= 50 },
-    { id: 'shop',   name: 'Шопоголик',         desc: 'Купи что-нибудь в магазине',           reward: 40,  ok: (s) => s.bought },
-    { id: 'rich',   name: 'Богач',             desc: 'Накопи 1000 монет',                    reward: 100, ok: (s) => s.coins >= 1000 },
+    { id: 'first',  name: 'Первый раунд',       desc: 'Сыграй один раунд',                     reward: 20,  ok: (s) => s.rounds >= 1 },
+    { id: 'play10', name: 'Постоянный клиент',  desc: 'Сыграй 10 раундов',                     reward: 100, ok: (s) => s.rounds >= 10 },
+    { id: 's500',   name: 'Разогрелся',         desc: 'Набери 1000 очков за раунд',            reward: 50,  ok: (s) => Math.max(s.best, s.bestS) >= 1000 },
+    { id: 's2000',  name: 'Пять тысяч',         desc: 'Набери 5000 очков за раунд',            reward: 100, ok: (s) => Math.max(s.best, s.bestS) >= 5000 },
+    { id: 's10000', name: 'Лютый рекорд',       desc: 'Набери 20000 очков за раунд',           reward: 300, ok: (s) => Math.max(s.best, s.bestS) >= 20000 },
+    { id: 'acid1',  name: 'Приход',             desc: 'Поймай свою первую марку',              reward: 50,  ok: (s) => s.totals.acid >= 1 },
+    { id: 'acid2',  name: 'Двойной приход',     desc: 'Поймай 2 марки за один раунд',          reward: 100, ok: (s, r) => r.acid >= 2 },
+    { id: 'acid3',  name: 'Тройной приход',     desc: 'Поймай 3 марки за один раунд',          reward: 250, ok: (s, r) => r.acid >= 3 },
+    { id: 'col5',   name: 'Полколлекции',       desc: 'Собери 5 разных марок',                 reward: 100, ok: (s) => s.stamps.length >= 5 },
+    { id: 'col10',  name: 'Коллекционер',       desc: 'Собери все 10 марок',                   reward: 300, ok: (s) => s.stamps.length >= 10 },
+    { id: 'dollar', name: 'Денежный дождь',     desc: 'Поймай 100 долларов',                   reward: 60,  ok: (s) => s.totals.dollar >= 100 },
+    { id: 'redbull',name: 'Крылья',             desc: 'Поймай 50 Ред Буллов',                  reward: 60,  ok: (s) => s.totals.redbull >= 50 },
+    { id: 'xanax',  name: 'Полное спокойствие', desc: 'Поймай 50 ксанов',                      reward: 60,  ok: (s) => s.totals.xanax >= 50 },
+    { id: 'syringe',name: 'Шмурдяк-маньяк',     desc: 'Поймай 50 шмурдяков',                   reward: 60,  ok: (s) => s.totals.syringe >= 50 },
+    { id: 'shop',   name: 'Шопоголик',          desc: 'Купи что-нибудь в магазине',            reward: 40,  ok: (s) => s.bought },
+    { id: 'rich',   name: 'Богач',              desc: 'Накопи 1000 монет',                     reward: 100, ok: (s) => s.coins >= 1000 },
+    { id: 'boss',   name: 'Босс повержен',      desc: 'Пройди босса без урона',                reward: 100, ok: (s, r) => !!r.boss },
+    { id: 'combo',  name: 'Серия',              desc: 'Поймай 30 предметов подряд',            reward: 100, ok: (s, r) => r.maxCombo >= 30 },
+    { id: 'clean',  name: 'Без царапин',        desc: 'Закончи раунд на 30 секунд без потерь', reward: 120, ok: (s, r) => !!r.noHit },
+    { id: 'od',     name: 'Передоз',            desc: 'Поймай передоз',                        reward: 30,  ok: (s, r) => r.od >= 1 },
+    { id: 'surv60', name: 'Выживальщик',        desc: 'Продержись 60 с в выживании',           reward: 150, ok: (s, r) => r.mode === 'survival' && r.survTime >= 60 },
+    { id: 'daily',  name: 'Дисциплина',         desc: 'Выполни все задания дня',               reward: 100, ok: (s) => s.dailyAll >= 1 },
   ];
+  const DAILY_T = [
+    { id: 'dollar',  label: 'Поймай {n} долларов',      targets: [30, 45, 60],     reward: 40, mode: 'sum', val: (r) => r.counts.dollar || 0 },
+    { id: 'redbull', label: 'Поймай {n} Ред Буллов',    targets: [8, 12, 16],      reward: 50, mode: 'sum', val: (r) => r.counts.redbull || 0 },
+    { id: 'syringe', label: 'Поймай {n} шмурдяков',     targets: [8, 12],          reward: 50, mode: 'sum', val: (r) => r.counts.syringe || 0 },
+    { id: 'xanax',   label: 'Поймай {n} ксанов',        targets: [8, 12, 16],      reward: 50, mode: 'sum', val: (r) => r.counts.xanax || 0 },
+    { id: 'score',   label: 'Набери {n} очков за раунд',targets: [1500, 4000, 8000],reward: 70, mode: 'max', val: (r) => r.score },
+    { id: 'combo',   label: 'Серия из {n} подряд',      targets: [15, 25, 35],     reward: 70, mode: 'max', val: (r) => r.maxCombo },
+    { id: 'acid',    label: 'Поймай {n} марок за день', targets: [2, 3],           reward: 80, mode: 'sum', val: (r) => r.acid },
+    { id: 'boss',    label: 'Победи босса',             targets: [1],              reward: 90, mode: 'sum', val: (r) => (r.boss ? 1 : 0) },
+    { id: 'surv',    label: 'Продержись {n} с в выживании', targets: [30, 45, 60], reward: 80, mode: 'max', val: (r) => (r.mode === 'survival' ? Math.floor(r.survTime) : 0) },
+  ];
+  function todayKey() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function seeded(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return function () {
+      h += 0x6D2B79F5; let t = h;
+      t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function ensureDaily() {
+    const k = todayKey();
+    if (save.daily && save.daily.date === k) return;
+    const rnd = seeded(k), pool = DAILY_T.slice(), picks = [];
+    while (picks.length < 3) {
+      const t = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
+      picks.push({ id: t.id, target: t.targets[Math.floor(rnd() * t.targets.length)] });
+    }
+    save.daily = { date: k, picks, prog: {}, done: {}, allGiven: false };
+    persist();
+  }
+  function updateDailies(r) {
+    ensureDaily();
+    const out = [];
+    for (const p of save.daily.picks) {
+      if (save.daily.done[p.id]) continue;
+      const t = DAILY_T.find((q) => q.id === p.id);
+      const v = t.val(r), cur = save.daily.prog[p.id] || 0;
+      const nv = t.mode === 'sum' ? cur + v : Math.max(cur, v);
+      save.daily.prog[p.id] = nv;
+      if (nv >= p.target) {
+        save.daily.done[p.id] = 1; save.coins += t.reward;
+        out.push({ text: t.label.replace('{n}', p.target), reward: t.reward });
+      }
+    }
+    if (!save.daily.allGiven && save.daily.picks.every((p) => save.daily.done[p.id])) {
+      save.daily.allGiven = true; save.dailyAll++; save.coins += 50;
+      out.push({ text: 'Все задания дня', reward: 50 });
+    }
+    return out;
+  }
   function checkAch(r) {
     const out = [];
     let again = true;
@@ -202,18 +299,20 @@
     }
     return out;
   }
+  const EMPTY_RS = () => ({ counts: {}, acid: 0, stamps: [], maxCombo: 0, boss: false, od: 0, noHit: false, mode: 'classic', survTime: 0, score: 0 });
 
   // ================= ЭКРАНЫ =================
-  const screens = ['menu', 'shop', 'ach', 'end'];
+  const screens = ['menu', 'shop', 'ach', 'daily', 'rules', 'end'];
   function show(name) {
     screens.forEach((n) => $(n).classList.toggle('show', n === name));
     if (name === 'menu') updateMenu();
     if (name === 'shop') renderShop();
     if (name === 'ach') renderAch();
+    if (name === 'daily') renderDaily();
   }
   function updateMenu() {
     $('mCoins').textContent = '🪙 ' + save.coins;
-    $('mBest').textContent = 'РЕКОРД ' + save.best;
+    $('mBest').textContent = 'РЕКОРД ' + save.best + (save.bestS ? ' / ВЫЖ. ' + save.bestS : '');
   }
   let toastTimer = null;
   function toast(text) {
@@ -225,7 +324,7 @@
     $('sCoins').textContent = '🪙 ' + save.coins;
     let h = '<div class="sec">УЛУЧШЕНИЯ</div>';
     for (const u of UPS) {
-      const lvl = save.up[u.id], max = u.costs.length;
+      const lvl = save.up[u.id] || 0, max = u.costs.length;
       const pips = '■'.repeat(lvl) + '□'.repeat(max - lvl);
       const btn = lvl >= max
         ? '<button disabled>Макс</button>'
@@ -245,7 +344,7 @@
     $('shopList').innerHTML = h;
   }
   function afterBuy() {
-    const got = checkAch({ acid: 0 });
+    const got = checkAch(EMPTY_RS());
     if (got.length) toast('Достижение: ' + got[0].name + ' +' + got[0].reward + ' 🪙');
     persist(); renderShop(); updateMenu();
   }
@@ -253,10 +352,10 @@
     const b = e.target.closest('button[data-act]'); if (!b) return;
     const id = b.dataset.id;
     if (b.dataset.act === 'up') {
-      const u = UPS.find((q) => q.id === id), lvl = save.up[id];
+      const u = UPS.find((q) => q.id === id), lvl = save.up[id] || 0;
       if (lvl >= u.costs.length) return;
       if (save.coins < u.costs[lvl]) { toast('Не хватает монет'); return; }
-      save.coins -= u.costs[lvl]; save.up[id]++; save.bought = true; afterBuy();
+      save.coins -= u.costs[lvl]; save.up[id] = lvl + 1; save.bought = true; afterBuy();
     } else {
       const th = THEMES[id];
       if (save.themes.includes(id)) { save.theme = id; persist(); renderShop(); return; }
@@ -279,7 +378,21 @@
     $('achList').innerHTML = h;
   }
 
-  // ================= ИГРА =================
+  function renderDaily() {
+    ensureDaily();
+    let h = '';
+    for (const p of save.daily.picks) {
+      const t = DAILY_T.find((q) => q.id === p.id);
+      const d = !!save.daily.done[p.id], cur = Math.min(p.target, save.daily.prog[p.id] || 0);
+      h += `<div class="card ${d ? 'done' : ''}"><div class="t">${d ? '🏆 ' : ''}${t.label.replace('{n}', p.target)}</div>
+            <div class="bar"><i style="width:${Math.round(100 * cur / p.target)}%"></i></div>
+            <div class="r"><span>${cur} / ${p.target}</span><span>🪙 ${t.reward}</span></div></div>`;
+    }
+    h += `<div class="card ${save.daily.allGiven ? 'done' : ''}"><div class="t">Бонус за все три</div><div class="r"><span>${save.daily.allGiven ? 'ПОЛУЧЕНО' : 'Выполни все'}</span><span>🪙 50</span></div></div>`;
+    $('dailyList').innerHTML = h;
+  }
+
+  // ================= ИГРА: ХОЛСТ =================
   const cv = $('c');
   const ctx = cv.getContext('2d');
   let W, H, DPR, S;
@@ -300,63 +413,169 @@
   const acidImgs = [];
   for (let k = 0; k < 10; k++) { const i = new Image(); i.src = 'img/acid' + k + '.png'; acidImgs.push(i); }
 
-  let ROUND = 60, RAIN = 8;
+  // ================= ИГРА: ПАРАМЕТРЫ =================
+  const BASE_ROUND = 30, BOSS_DUR = 9;
+  let ROUND = BASE_ROUND, RAIN = 8;
   const TYPES = [
-    { id: 'dollar',  pts: 10,  w: 40, r: 22 },
-    { id: 'redbull', pts: 25,  w: 22, r: 22 },
-    { id: 'syringe', pts: 40,  w: 16, r: 22 },
-    { id: 'xanax',   pts: 50,  w: 18, r: 22 },
+    { id: 'dollar',  pts: 10,  w: 34, r: 22 },
+    { id: 'redbull', pts: 25,  w: 18, r: 22 },
+    { id: 'syringe', pts: 40,  w: 14, r: 22 },
+    { id: 'xanax',   pts: 50,  w: 16, r: 22 },
+    { id: 'bomb',    pts: 0,   w: 8,  r: 20, danger: true },
+    { id: 'siren',   pts: 0,   w: 5,  r: 20, danger: true },
+    { id: 'fine',    pts: 0,   w: 5,  r: 20, danger: true },
     { id: 'acid',    pts: 200, w: 0,  r: 24 },
   ];
-  const TOTAL_W = TYPES.reduce((a, t) => a + t.w, 0);
+  const T = {}; TYPES.forEach((t) => { T[t.id] = t; });
+  const MAX_COMBO_MULT = 8;
 
-  let running = false;
+  let running = false, paused = false, mode = 'classic';
+  let score, el, rainbow, spawnT, items, floats, parts, player, targetX, pointerX, rs, keys = {};
+  let lives, maxLives, inv, combo, od, dazed, boost, slow, shield, stun, shake, flash;
+  let boss, bossDone, nextBossAt;
   let acidPlan = [], acidPending = null;
-  let score, timeLeft, rainbow, spawnT, items, floats, parts, player, targetX, rs, keys = {};
 
-  // от 1 до 3 марок за раунд, не ближе 12 секунд друг к другу
   function planAcid() {
-    const cnt = 1 + Math.floor(Math.random() * 3);
-    for (let tries = 0; tries < 200; tries++) {
-      const ts = [];
-      for (let i = 0; i < cnt; i++) ts.push(5 + Math.random() * (ROUND - 10));
-      ts.sort((a, b) => a - b);
-      if (ts.every((v, i) => i === 0 || v - ts[i - 1] >= 12)) return ts;
+    const lo = 3, hi = ROUND - BOSS_DUR - 1, gap = RAIN + 1;
+    for (let cnt = 1 + Math.floor(Math.random() * 3); cnt >= 1; cnt--) {
+      for (let tries = 0; tries < 300; tries++) {
+        const ts = [];
+        for (let i = 0; i < cnt; i++) ts.push(lo + Math.random() * (hi - lo));
+        ts.sort((a, b) => a - b);
+        if (ts.every((v, i) => i === 0 || v - ts[i - 1] >= gap)) return ts;
+      }
     }
-    return [ROUND / 2];
+    return [(lo + hi) / 2];
   }
   function spawnAcid(x) {
-    const t = TYPES.find((q) => q.id === 'acid');
-    const r = t.r * S;
+    const t = T.acid, r = t.r * S;
     const idx = Math.floor(Math.random() * acidImgs.length);
-    items.push({ t, r, x, y: -r, vy: (950 + Math.random() * 150) * (H / 700), rot: 0, vr: 0, idx, img: acidImgs[idx] });
+    items.push({ t, r, x, y: -r, vy: (950 + Math.random() * 150) * (H / 700), rot: 0, vr: 0, age: 0, idx, img: acidImgs[idx] });
   }
 
   function reset() {
-    ROUND = 60 + 5 * save.up.time;
+    ROUND = BASE_ROUND + 5 * save.up.time;
     RAIN = 8 + 2 * save.up.trip;
-    score = 0; timeLeft = ROUND; rainbow = 0; spawnT = 0.3;
+    score = 0; el = 0; rainbow = 0; spawnT = 0.3;
     items = []; floats = []; parts = [];
-    rs = { counts: {}, acid: 0, stamps: [] };
-    acidPending = null; acidPlan = planAcid();
+    rs = EMPTY_RS(); rs.mode = mode; rs.noHit = true;
+    maxLives = 3 + save.up.heart; lives = maxLives; inv = 0;
+    combo = 0; od = 0; dazed = 0; boost = 0; slow = 0; shield = false; stun = 0; shake = 0; flash = 0;
+    boss = null; bossDone = false; nextBossAt = 45;
+    acidPending = null;
+    acidPlan = mode === 'classic' ? planAcid() : [25 + Math.random() * 15];
     player = { x: W / 2 };
-    targetX = W / 2;
+    targetX = pointerX = W / 2;
   }
-  reset();
+  mode = 'classic'; reset();
+
+  const prog = () => (mode === 'classic' ? Math.min(1, el / ROUND) : Math.min(1, el / 70));
+  const comboMult = () => Math.min(MAX_COMBO_MULT, 1 + Math.floor(combo / 5));
 
   function pick() {
-    let r = Math.random() * TOTAL_W;
-    for (const t of TYPES) { if ((r -= t.w) < 0) return t; }
+    const dm = rainbow > 0 ? 0 : 0.5 + prog();
+    const ws = TYPES.map((t) => t.w * (t.danger ? dm : 1));
+    let r = Math.random() * ws.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < TYPES.length; i++) { if ((r -= ws[i]) < 0) return TYPES[i]; }
     return TYPES[0];
   }
   function spawn() {
-    const t = pick();
+    const t = pick(), p = prog();
     const r = t.r * S;
-    items.push({
-      t, r, x: r + Math.random() * (W - 2 * r), y: -r,
-      vy: (170 + Math.random() * 130) * (H / 700) * (1 + (1 - timeLeft / ROUND) * 0.35),
+    const x = r + Math.random() * (W - 2 * r);
+    const it = {
+      t, r, x, y: -r, age: 0,
+      vy: (170 + Math.random() * 130) * (H / 700) * (1 + p * 0.5),
       rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 3,
-    });
+    };
+    const q = Math.random();
+    if (q < 0.08 + 0.5 * p) it.zig = { x0: x, amp: (22 + Math.random() * 34) * S, f: 2 + Math.random() * 2.5, ph: Math.random() * 6.28 };
+    else if (q < 0.14 + 0.8 * p) it.vx = (Math.random() < 0.5 ? -1 : 1) * (70 + Math.random() * 90) * S;
+    if (Math.random() < 0.05 + 0.25 * p) it.vanishY = (0.35 + Math.random() * 0.25) * H;
+    items.push(it);
+  }
+
+  // ---------- босс ----------
+  function startBoss() {
+    boss = { end: el + BOSS_DUR, hit: false, next: 0.9, vol: 0 };
+    floats.push({ x: W / 2, y: H * 0.4, text: 'БОСС!', color: '#ff2e93', life: 1.4 });
+    shake = 0.4; haptic('bad');
+  }
+  function bossY() { return 125 * Math.max(0.8, S); }
+  function bossX(t) { return W / 2 + Math.sin(t * 1.4) * W * 0.32; }
+  function bossVolley() {
+    const n = Math.max(5, Math.floor(W / (56 * S)));
+    const slots = []; for (let i = 0; i < n; i++) slots.push(i);
+    const take = (k) => { const out = []; for (let i = 0; i < k; i++) out.push(slots.splice(Math.floor(Math.random() * slots.length), 1)[0]); return out; };
+    const bombs = take(2 + (boss.vol >= 3 ? 1 : 0)), cash = take(2);
+    const y0 = bossY() + 34 * S, vy = 235 * (H / 700);
+    const mk = (slot, t, pts) => items.push({ t, r: t.r * S, x: (slot + 0.5) * W / n, y: y0, age: 0, vy, rot: 0, vr: 0, bossItem: true, pts });
+    bombs.forEach((s) => mk(s, T.bomb));
+    cash.forEach((s) => mk(s, T.dollar, 30));
+    boss.vol++;
+  }
+  function bossFinish(win) {
+    if (!boss) return;
+    if (win && !boss.hit) {
+      score += 300; rs.boss = true;
+      floats.push({ x: W / 2, y: H * 0.35, text: 'БОСС ПОБЕЖДЁН +300', color: '#ffd1ea', life: 1.8 });
+      haptic('big');
+    }
+    boss = null;
+  }
+
+  // ---------- эффекты ----------
+  function addFloat(x, y, text, color) { floats.push({ x, y, text, color, life: 0.9 }); }
+  function burst(x, y, n, rainbowMode) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * 6.28, v = 80 + Math.random() * 220;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6, hue: rainbowMode ? Math.random() * 360 : 330 });
+    }
+  }
+  function loseLife() {
+    if (inv > 0) return;
+    lives--; inv = 1.6; shake = 0.45; flash = 0.35; rs.noHit = false;
+    if (boss) boss.hit = true;
+    haptic('bad');
+    if (lives <= 0) endGame('dead');
+  }
+  function hitDanger(it) {
+    if (shield) {
+      shield = false; addFloat(it.x, it.y, 'ЩИТ!', '#ffd1ea'); burst(it.x, it.y, 14, false); haptic('big'); return;
+    }
+    combo = 0;
+    if (boss) boss.hit = true;
+    if (it.t.id === 'bomb') { addFloat(it.x, it.y, 'БАХ!', '#ff2e93'); burst(it.x, it.y, 24, false); loseLife(); }
+    else if (it.t.id === 'siren') { stun = 1.5; shake = 0.3; rs.noHit = false; addFloat(it.x, it.y, 'ТОРМОЗНУЛИ', '#ff2e93'); haptic('bad'); }
+    else { score = Math.max(0, score - 150); rs.noHit = false; addFloat(it.x, it.y, '-150', '#ff2e93'); haptic('bad'); }
+  }
+  function catchGood(it) {
+    const id = it.t.id;
+    combo++; rs.maxCombo = Math.max(rs.maxCombo, combo);
+    const mult = rainbow > 0 ? Math.max(10, comboMult()) : comboMult();
+    const gain = (it.pts || it.t.pts) * mult;
+    score += gain;
+    rs.counts[id] = (rs.counts[id] || 0) + 1;
+    if (id === 'acid') {
+      rs.acid++; rs.stamps.push(it.idx);
+      rainbow = RAIN;
+      addFloat(it.x, it.y, 'КРОЕТ!', '#fff');
+      burst(it.x, it.y, 40, true); haptic('big');
+      return;
+    }
+    if (id === 'redbull') { boost = 5; }
+    if (id === 'xanax') { slow = 5; od += 18; }
+    if (id === 'syringe') { shield = true; od += 25; }
+    if (od >= 100 && dazed <= 0) { dazed = 3; od = 0; rs.od++; shake = 3; addFloat(player.x, H * 0.5, 'ПЕРЕДОЗ!', '#ff2e93'); haptic('bad'); }
+    addFloat(it.x, it.y, '+' + gain, mult > 1 ? '#fff' : '#ff8fc8');
+    burst(it.x, it.y, mult > 1 ? 14 : 8, rainbow > 0);
+    haptic();
+  }
+  function miss(it) {
+    if (!running || rainbow > 0 || it.bossItem) return;
+    if (combo > 0) addFloat(Math.max(40, Math.min(W - 40, it.x)), H - 30, 'МИМО', '#ff8fc8');
+    combo = 0;
+    if (it.t.id === 'xanax' || it.t.id === 'syringe') loseLife();
   }
 
   function playerBox() {
@@ -365,33 +584,60 @@
     return { ph, pw, top: H - ph - 4, left: player.x - pw / 2 };
   }
 
-  function addFloat(x, y, text, color) { floats.push({ x, y, text, color, life: 0.9 }); }
-  function burst(x, y, n, rainbowMode) {
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * 6.28, v = 80 + Math.random() * 220;
-      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6,
-        hue: rainbowMode ? Math.random() * 360 : 45 });
-    }
-  }
-
-  function update(dt) {
-    const speed = 900 * S;
-    if (keys.ArrowLeft || keys.a) targetX -= speed * dt;
-    if (keys.ArrowRight || keys.d) targetX += speed * dt;
+  // ================= ОБНОВЛЕНИЕ =================
+  function update(dt, t) {
+    if (paused) return;
     const b0 = playerBox();
-    targetX = Math.max(b0.pw * 0.3, Math.min(W - b0.pw * 0.3, targetX));
-    player.x += (targetX - player.x) * Math.min(1, dt * 18);
+
+    // управление
+    const ks = 900 * S * dt;
+    if (keys.ArrowLeft || keys.a) pointerX -= ks;
+    if (keys.ArrowRight || keys.d) pointerX += ks;
+    let tx = pointerX;
+    if (dazed > 0) tx = W - tx;
+    if (rainbow > 0) tx += Math.sin(t * 3) * 70 * S + Math.sin(t * 5.3) * 25 * S;
+    targetX = Math.max(b0.pw * 0.3, Math.min(W - b0.pw * 0.3, tx));
+    if (stun <= 0) {
+      const maxStep = 700 * S * (boost > 0 ? 2.6 : 1) * dt;
+      let step = (targetX - player.x) * Math.min(1, dt * 18);
+      step = Math.max(-maxStep, Math.min(maxStep, step));
+      player.x += step;
+    }
+
+    // таймеры
+    rainbow = Math.max(0, rainbow - dt); boost = Math.max(0, boost - dt); slow = Math.max(0, slow - dt);
+    stun = Math.max(0, stun - dt); dazed = Math.max(0, dazed - dt); inv = Math.max(0, inv - dt);
+    shake = Math.max(0, shake - dt); flash = Math.max(0, flash - dt);
+    const ts = slow > 0 ? 0.5 : 1;
 
     if (running) {
-      timeLeft -= dt;
-      if (rainbow > 0) rainbow = Math.max(0, rainbow - dt);
-      spawnT -= dt;
-      const base = 0.72 - 0.28 * (1 - timeLeft / ROUND);
-      const interval = base / (rainbow > 0 ? 3 : 1);
-      while (spawnT <= 0) { spawn(); spawnT += interval; }
-      const el = ROUND - timeLeft;
-      if (!acidPending && acidPlan.length && el >= acidPlan[0]) {
+      el += dt;
+      if (dazed <= 0) od = Math.max(0, od - 5 * dt);
+      const p = prog();
+
+      // босс
+      if (!boss) {
+        if (mode === 'classic' ? (!bossDone && el >= ROUND - BOSS_DUR) : el >= nextBossAt) {
+          startBoss(); if (mode === 'classic') bossDone = true;
+        }
+      }
+      if (boss) {
+        boss.next -= dt;
+        if (boss.next <= 0) { bossVolley(); boss.next = 1.35; }
+        if (mode === 'survival' && el >= boss.end) { bossFinish(true); nextBossAt = el + 50; }
+      }
+
+      // обычные предметы
+      if (!boss) {
+        spawnT -= dt;
+        const interval = Math.max(0.28, 0.78 - 0.33 * p) / (rainbow > 0 ? 3 : 1);
+        while (spawnT <= 0) { spawn(); spawnT += interval; }
+      }
+
+      // марка
+      if (!acidPending && !boss && acidPlan.length && el >= acidPlan[0]) {
         acidPlan.shift();
+        if (mode === 'survival') acidPlan.push(el + 30 + Math.random() * 20);
         const m = 40 * S;
         acidPending = { x: m + Math.random() * (W - 2 * m), t: 0.6 };
       }
@@ -399,35 +645,33 @@
         acidPending.t -= dt;
         if (acidPending.t <= 0) { spawnAcid(acidPending.x); acidPending = null; }
       }
-      if (timeLeft <= 0) { endGame(); }
+
+      if (mode === 'classic' && el >= ROUND) { endGame('time'); }
     }
 
+    // предметы
     const b = playerBox();
     const catchTop = b.top + b.ph * 0.05, catchBottom = b.top + b.ph * 0.5;
     const halfW = b.pw * 0.42 * (1 + 0.15 * save.up.wide);
     for (let i = items.length - 1; i >= 0; i--) {
       const it = items[i];
-      it.y += it.vy * dt; it.rot += it.vr * dt;
+      const d = dt * ts;
+      it.age += d; it.y += it.vy * d; it.rot += it.vr * d;
+      if (it.zig) it.x = Math.max(it.r, Math.min(W - it.r, it.zig.x0 + Math.sin(it.age * it.zig.f + it.zig.ph) * it.zig.amp));
+      if (it.vx) {
+        it.x += it.vx * d;
+        if (it.x < it.r) { it.x = it.r; it.vx = Math.abs(it.vx); }
+        if (it.x > W - it.r) { it.x = W - it.r; it.vx = -Math.abs(it.vx); }
+      }
+      if (it.vanishY && it.y >= it.vanishY) { items.splice(i, 1); continue; }
       const inX = Math.abs(it.x - player.x) < halfW + it.r * 0.4;
       const inY = it.y + it.r * 0.6 > catchTop && it.y < catchBottom;
       if (running && inX && inY) {
-        const mult = rainbow > 0 ? 10 : 1;
-        const gain = it.t.pts * mult;
-        score += gain;
-        const id = it.t.id;
-        rs.counts[id] = (rs.counts[id] || 0) + 1;
-        if (id === 'acid') {
-          rs.acid++; rs.stamps.push(it.idx);
-          rainbow = RAIN;
-          addFloat(it.x, it.y, 'x10!', '#fff');
-          burst(it.x, it.y, 40, true); haptic('big');
-        } else {
-          addFloat(it.x, it.y, '+' + gain, mult > 1 ? '#fff' : '#ffd23f');
-          burst(it.x, it.y, mult > 1 ? 14 : 8, mult > 1); haptic();
-        }
         items.splice(i, 1);
+        if (it.t.danger) hitDanger(it); else catchGood(it);
       } else if (it.y - it.r > H) {
         items.splice(i, 1);
+        if (!it.t.danger && it.t.id !== 'acid') miss(it);
       }
     }
     for (let i = floats.length - 1; i >= 0; i--) {
@@ -435,34 +679,39 @@
       if (f.life <= 0) floats.splice(i, 1);
     }
     for (let i = parts.length - 1; i >= 0; i--) {
-      const p = parts[i]; p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 600 * dt;
-      if (p.life <= 0) parts.splice(i, 1);
+      const q = parts[i]; q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 600 * dt;
+      if (q.life <= 0) parts.splice(i, 1);
     }
   }
 
-  // ---------- рисование ----------
+  // ================= РИСОВАНИЕ =================
   const lamps = [[0.12, 0.62], [0.35, 0.5], [0.62, 0.58], [0.86, 0.46], [0.5, 0.72]];
   function drawBackground(t) {
     if (rainbow > 0) {
       const h = t * 160;
       const g = ctx.createLinearGradient(0, 0, W, H);
       for (let i = 0; i <= 6; i++) g.addColorStop(i / 6, `hsl(${(h + i * 55) % 360},85%,48%)`);
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
+      ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(-20, -20, W + 40, H + 40);
     } else {
       const th = THEMES[save.theme] || THEMES.city;
       const g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, th.top); g.addColorStop(1, th.bot);
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
       for (const [lx, ly] of lamps) {
         const x = lx * W, y = ly * H;
         const rg = ctx.createRadialGradient(x, y, 0, x, y, 70 * S);
-        rg.addColorStop(0, `rgba(${th.lamp},.55)`); rg.addColorStop(1, `rgba(${th.lamp},0)`);
+        rg.addColorStop(0, `rgba(${th.lamp},.5)`); rg.addColorStop(1, `rgba(${th.lamp},0)`);
         ctx.fillStyle = rg; ctx.fillRect(x - 80 * S, y - 80 * S, 160 * S, 160 * S);
       }
     }
   }
 
+  function emoji(ch, size) {
+    ctx.font = `${size}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(ch, 0, 2);
+  }
   function drawPic(im, size) {
     if (!im || !im.complete || !im.naturalWidth) return;
     const k = size / Math.max(im.naturalWidth, im.naturalHeight);
@@ -474,6 +723,7 @@
     ctx.save();
     ctx.translate(it.x, it.y);
     const r = it.r, id = it.t.id;
+    if (it.vanishY && it.y > it.vanishY - 0.14 * H && Math.floor(t * 14) % 2 === 0) ctx.globalAlpha = 0.25;
     if (id === 'acid') {
       const hue = (t * 400) % 360;
       const g = ctx.createLinearGradient(0, -r * 7, 0, 0);
@@ -482,6 +732,13 @@
       ctx.rotate(Math.sin(t * 12) * 0.2);
       ctx.shadowColor = `hsl(${hue},100%,60%)`; ctx.shadowBlur = 24;
       drawPic(it.img, r * 2.4);
+    } else if (it.t.danger) {
+      const pulse = 0.6 + 0.4 * Math.sin(t * 10);
+      ctx.fillStyle = `rgba(255,46,147,${0.25 * pulse})`;
+      ctx.fillRect(-r * 1.2, -r * 1.2, r * 2.4, r * 2.4);
+      ctx.strokeStyle = `rgba(255,46,147,${0.9 * pulse})`; ctx.lineWidth = 3;
+      ctx.strokeRect(-r * 1.2, -r * 1.2, r * 2.4, r * 2.4);
+      emoji(id === 'bomb' ? '💣' : id === 'siren' ? '🚨' : '🧾', r * 1.9);
     } else {
       ctx.rotate(it.rot * 0.2);
       if (rainbow > 0) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 14; }
@@ -500,10 +757,31 @@
     ctx.save(); ctx.translate(x, y); ctx.scale(pulse, pulse);
     ctx.fillStyle = `hsl(${hue},100%,60%)`; ctx.shadowColor = '#fff'; ctx.shadowBlur = 16;
     ctx.fillRect(-18 * S, -18 * S, 36 * S, 36 * S);
-    ctx.shadowBlur = 0; ctx.fillStyle = '#12061f';
+    ctx.shadowBlur = 0; ctx.fillStyle = '#0a0008';
     ctx.font = Math.round(22 * S) + 'px ' + FONT;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('!', 0, 2);
     ctx.restore();
+  }
+
+  function drawBoss(t) {
+    if (!boss) return;
+    const x = bossX(el), y = bossY(), u = 6 * S;
+    ctx.save(); ctx.translate(x, y);
+    const sway = Math.sin(t * 8) * u * 0.4;
+    ctx.fillStyle = '#1a0012'; ctx.fillRect(-6 * u, 4 * u, 12 * u, 9 * u);                 // костюм
+    ctx.fillStyle = '#ff2e93'; ctx.fillRect(-0.7 * u, 4 * u, 1.4 * u, 6 * u);              // галстук
+    ctx.fillStyle = '#1a0012'; ctx.fillRect(-9 * u, 5 * u + sway, 3 * u, 7 * u); ctx.fillRect(6 * u, 5 * u - sway, 3 * u, 7 * u);
+    ctx.fillStyle = '#ffd1ea'; ctx.fillRect(-9 * u, 12 * u + sway, 3 * u, 2 * u); ctx.fillRect(6 * u, 12 * u - sway, 3 * u, 2 * u);
+    ctx.fillStyle = '#ffd1ea'; ctx.fillRect(-4 * u, -4 * u, 8 * u, 8 * u);                 // голова
+    ctx.fillStyle = '#ff2e93'; ctx.fillRect(-4.5 * u, -6 * u, 9 * u, 2.5 * u);             // кепка
+    ctx.fillStyle = '#000'; ctx.fillRect(-4 * u, -1 * u, 8 * u, 2.2 * u);                  // очки
+    ctx.fillStyle = '#ff2e93'; ctx.fillRect(-2 * u, 2.5 * u, 4 * u, 1 * u);                // рот
+    ctx.fillStyle = '#fff'; ctx.font = Math.round(8 * S + 2) + 'px ' + FONT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText('БОСС', 0, -7 * u);
+    ctx.restore();
+    const left = Math.max(0, (boss.end - el) / BOSS_DUR);
+    ctx.fillStyle = 'rgba(255,255,255,.2)'; ctx.fillRect(x - 40 * S, y + 14 * u, 80 * S, 5);
+    ctx.fillStyle = '#ff2e93'; ctx.fillRect(x - 40 * S, y + 14 * u, 80 * S * left, 5);
   }
 
   function drawPlayer(t) {
@@ -513,36 +791,87 @@
       rg.addColorStop(0, `hsla(${(t * 300) % 360},100%,65%,.65)`); rg.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = rg; ctx.fillRect(player.x - b.pw, b.top - b.ph * 0.4, b.pw * 2, b.ph * 1.8);
     }
+    if (boost > 0) {
+      ctx.fillStyle = 'rgba(255,46,147,.35)';
+      for (let k = 1; k <= 3; k++) ctx.fillRect(b.left - k * 14 * S, b.top + b.ph * (0.3 + 0.12 * k), 10 * S, 4);
+      for (let k = 1; k <= 3; k++) ctx.fillRect(b.left + b.pw + k * 4 * S, b.top + b.ph * (0.3 + 0.12 * k), 10 * S, 4);
+    }
+    if (inv > 0 && Math.floor(t * 16) % 2 === 0) ctx.globalAlpha = 0.35;
     if (img.complete && img.naturalWidth) ctx.drawImage(img, b.left, b.top, b.pw, b.ph);
     else { ctx.fillStyle = '#444'; ctx.fillRect(b.left, b.top, b.pw, b.ph); }
+    ctx.globalAlpha = 1;
+    if (shield) {
+      const cx = player.x, cy = b.top + b.ph * 0.4, rr = b.pw * 0.62;
+      ctx.strokeStyle = `rgba(255,209,234,${0.6 + 0.3 * Math.sin(t * 8)})`; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(cx, cy, rr, 0, 6.28); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,46,147,.12)'; ctx.fill();
+    }
+    if (stun > 0) { ctx.save(); ctx.translate(player.x, b.top - 12 * S); emoji('🚨', 26 * S); ctx.restore(); }
+  }
+
+  const HEART = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
+  function drawHeart(x, y, c, color) {
+    ctx.fillStyle = color;
+    for (let r = 0; r < HEART.length; r++) for (let q = 0; q < 7; q++) if (HEART[r][q] === 'X') ctx.fillRect(x + q * c, y + r * c, c, c);
   }
 
   function drawHUD(t) {
     const top = 16;
     ctx.textBaseline = 'top';
+    ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
     ctx.font = '18px ' + FONT;
     ctx.textAlign = 'left'; ctx.fillStyle = '#fff';
-    ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
     ctx.fillText(String(score), 14, top);
+    const secs = mode === 'classic' ? Math.ceil(Math.max(0, ROUND - el)) : Math.floor(el);
     ctx.textAlign = 'right';
-    ctx.fillStyle = timeLeft < 10 ? '#ff5a6e' : '#fff';
-    ctx.fillText(Math.ceil(Math.max(0, timeLeft)) + 'c', W - 14, top);
+    ctx.fillStyle = mode === 'classic' && ROUND - el < 8 ? '#ff2e93' : '#fff';
+    ctx.fillText(secs + 'c', W - 14, top);
+
+    // сердца
+    const c = Math.max(3, Math.round(3 * S));
+    for (let i = 0; i < maxLives; i++) drawHeart(14 + i * (7 * c + 6), 46, c, i < lives ? '#ff2e93' : '#4a2a3d');
+
+    // серия
+    ctx.textAlign = 'left'; ctx.font = '9px ' + FONT;
+    if (combo > 0) { ctx.fillStyle = comboMult() > 1 ? '#ffd1ea' : '#ff8fc8'; ctx.fillText('СЕРИЯ ' + combo + '  x' + comboMult(), 14, 46 + 6 * c + 10); }
+    // шкала передоза
+    const by = 46 + 6 * c + 30;
+    ctx.fillStyle = '#ff8fc8'; ctx.font = '7px ' + FONT; ctx.fillText('ПЕРЕДОЗ', 14, by);
+    ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(14, by + 12, 110, 8);
+    ctx.fillStyle = od > 70 && Math.floor(t * 8) % 2 === 0 ? '#fff' : '#ff2e93';
+    ctx.fillRect(14, by + 12, 110 * Math.min(1, od / 100), 8);
+    ctx.strokeStyle = '#ff2e93'; ctx.lineWidth = 2; ctx.strokeRect(14, by + 12, 110, 8);
+
+    // кроет
     if (rainbow > 0) {
       ctx.textAlign = 'center';
       ctx.fillStyle = `hsl(${(t * 400) % 360},100%,70%)`;
-      ctx.font = '30px ' + FONT;
-      ctx.fillText('x10', W / 2, top + 28);
-      ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-      ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 60, top + 70, 120, 8);
-      ctx.fillStyle = '#fff'; ctx.fillRect(W / 2 - 60, top + 70, 120 * rainbow / RAIN, 8);
+      ctx.font = '16px ' + FONT;
+      ctx.fillText('КРОЕТ x10', W / 2, 46);
+      ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(W / 2 - 60, 70, 120, 8);
+      ctx.fillStyle = '#fff'; ctx.fillRect(W / 2 - 60, 70, 120 * rainbow / RAIN, 8);
     }
+
+    // эффекты справа
+    ctx.textAlign = 'right'; ctx.font = '8px ' + FONT; ctx.fillStyle = '#ffd1ea';
+    let ly = 96;
+    const chip = (s) => { ctx.fillText(s, W - 14, ly); ly += 14; };
+    if (boost > 0) chip('ЭНЕРГИЯ ' + Math.ceil(boost) + 'c');
+    if (slow > 0) chip('ЗАМЕДЛ. ' + Math.ceil(slow) + 'c');
+    if (shield) chip('ЩИТ');
+    if (stun > 0) chip('ТОРМОЗ');
+    if (dazed > 0) { ctx.fillStyle = '#ff2e93'; chip('ПЕРЕДОЗ ' + Math.ceil(dazed) + 'c'); }
     ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
   }
 
   function draw(t) {
+    ctx.save();
+    if (shake > 0) ctx.translate((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 12);
     drawBackground(t);
     for (const it of items) drawItem(it, t);
     drawWarning(t);
+    drawBoss(t);
     drawPlayer(t);
     for (const p of parts) {
       ctx.globalAlpha = Math.max(0, p.life / 0.6);
@@ -555,61 +884,100 @@
     for (const f of floats) {
       ctx.globalAlpha = Math.max(0, Math.min(1, f.life / 0.4));
       ctx.fillStyle = f.color; ctx.shadowColor = '#000'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
-      ctx.fillText(f.text, f.x, f.y);
+      ctx.fillText(f.text, Math.max(70, Math.min(W - 70, f.x)), f.y);
     }
     ctx.globalAlpha = 1; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    ctx.restore();
+    if (flash > 0) { ctx.fillStyle = `rgba(255,46,147,${Math.min(0.45, flash)})`; ctx.fillRect(0, 0, W, H); }
+    if (dazed > 0) {
+      ctx.fillStyle = `rgba(255,46,147,${0.12 + 0.06 * Math.sin(t * 9)})`; ctx.fillRect(0, 0, W, H);
+    }
     if (running) drawHUD(t);
   }
 
-  // ---------- управление ----------
-  window.addEventListener('pointerdown', (e) => { targetX = e.clientX; });
-  window.addEventListener('pointermove', (e) => { if (e.buttons || e.pointerType === 'touch') targetX = e.clientX; });
-  window.addEventListener('keydown', (e) => { keys[e.key] = true; });
+  // ================= УПРАВЛЕНИЕ =================
+  window.addEventListener('pointerdown', (e) => { pointerX = e.clientX; });
+  window.addEventListener('pointermove', (e) => { if (e.buttons || e.pointerType === 'touch') pointerX = e.clientX; });
+  window.addEventListener('keydown', (e) => {
+    keys[e.key] = true;
+    if ((e.key === 'Escape' || e.key === 'p') && running) setPaused(!paused);
+  });
   window.addEventListener('keyup', (e) => { keys[e.key] = false; });
-  // блокируем прокрутку страницы, но списки магазина и достижений крутятся
+  // блокируем прокрутку страницы, но экраны со списками прокручиваются
   window.addEventListener('touchmove', (e) => {
-    if (!(e.target.closest && e.target.closest('.scroll'))) e.preventDefault();
+    if (!(e.target.closest && e.target.closest('.overlay'))) e.preventDefault();
   }, { passive: false });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) setPaused(true); });
 
-  function startGame() {
+  function setPaused(v) {
+    if (!running) return;
+    paused = v;
+    $('pause').classList.toggle('show', v);
+    $('pauseBtn').style.display = v ? 'none' : 'block';
+  }
+
+  function startGame(m) {
+    mode = m || mode;
     reset();
     screens.forEach((n) => $(n).classList.remove('show'));
-    running = true;
+    $('pause').classList.remove('show');
+    paused = false; running = true;
+    $('pauseBtn').style.display = 'block';
   }
-  function endGame() {
-    running = false;
-    const earned = Math.floor(score / 20);
-    const isRecord = score > save.best;
-    if (isRecord) save.best = score;
+
+  function endGame(reason) {
+    if (!running) return;
+    if (reason === 'time' && boss) bossFinish(true);
+    boss = null;
+    running = false; paused = false;
+    $('pauseBtn').style.display = 'none';
+
+    rs.score = score; rs.survTime = el; rs.mode = mode;
+    rs.noHit = rs.noHit && reason === 'time' && mode === 'classic';
+    const earned = Math.floor(score / 50);
+    let isRecord = false;
+    if (mode === 'classic') { isRecord = score > save.best; if (isRecord) save.best = score; }
+    else { isRecord = score > save.bestS; if (isRecord) save.bestS = score; }
     save.coins += earned;
     save.rounds++;
     for (const k of Object.keys(rs.counts)) save.totals[k] = (save.totals[k] || 0) + rs.counts[k];
     for (const idx of rs.stamps) if (!save.stamps.includes(idx)) save.stamps.push(idx);
+    const dl = updateDailies(rs);
     const got = checkAch(rs);
     persist();
 
+    $('endReason').textContent = reason === 'time' ? 'ВРЕМЯ ВЫШЛО' : (mode === 'survival' ? 'ВЫРУБИЛО · ' + Math.floor(el) + ' с' : 'ВЫРУБИЛО');
     $('finalScore').textContent = score;
-    $('bestLine').textContent = isRecord ? 'НОВЫЙ РЕКОРД!' : 'Рекорд: ' + save.best;
+    const best = mode === 'classic' ? save.best : save.bestS;
+    $('bestLine').textContent = isRecord ? 'НОВЫЙ РЕКОРД!' : 'Рекорд: ' + best;
     $('earned').textContent = '+' + earned + ' 🪙';
-    $('newAch').innerHTML = got.length
-      ? got.map((a) => '🏆 ' + a.name + ' +' + a.reward + ' 🪙').join('<br>')
-      : '';
+    const lines = dl.map((d) => '📋 ' + d.text + ' +' + d.reward + ' 🪙').concat(got.map((a) => '🏆 ' + a.name + ' +' + a.reward + ' 🪙'));
+    $('newAch').innerHTML = lines.join('<br>');
     show('end');
   }
 
-  $('play').addEventListener('click', startGame);
-  $('again').addEventListener('click', startGame);
+  $('play').addEventListener('click', () => startGame('classic'));
+  $('playS').addEventListener('click', () => startGame('survival'));
+  $('again').addEventListener('click', () => startGame());
   $('toMenu').addEventListener('click', () => show('menu'));
   $('toShop').addEventListener('click', () => show('shop'));
   $('toAch').addEventListener('click', () => show('ach'));
-  $('shopBack').addEventListener('click', () => show('menu'));
-  $('achBack').addEventListener('click', () => show('menu'));
+  $('toDaily').addEventListener('click', () => show('daily'));
+  $('toRules').addEventListener('click', () => show('rules'));
+  ['shopBack', 'achBack', 'dailyBack', 'rulesBack'].forEach((id) => $(id).addEventListener('click', () => show('menu')));
+  $('pauseBtn').addEventListener('click', () => setPaused(true));
+  $('resume').addEventListener('click', () => setPaused(false));
+  $('quit').addEventListener('click', () => {
+    running = false; paused = false; boss = null;
+    $('pause').classList.remove('show'); $('pauseBtn').style.display = 'none';
+    show('menu');
+  });
   updateMenu();
 
   let last = performance.now();
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    update(dt); draw(now / 1000);
+    update(dt, now / 1000); draw(now / 1000);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
