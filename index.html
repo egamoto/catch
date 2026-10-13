@@ -69,6 +69,18 @@
   .small { font-size: 10px; opacity: .9; }
   .newach { font-size: 9px; color: var(--pink2); line-height: 1.8; max-width: 330px; }
 
+  .reels { display: flex; gap: 10px; justify-content: center; }
+  .reel { width: 76px; height: 76px; border: 4px solid var(--pink); background: #000; display: flex; align-items: center; justify-content: center; }
+  .reel img { max-width: 62px; max-height: 62px; }
+  .reel.win { border-color: #fff; box-shadow: 0 0 16px var(--pink); }
+  .msg { font-size: 10px; color: var(--pink2); min-height: 16px; }
+  .wheel { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 4px solid #fff; }
+  .wheel.pink { background: var(--pink); color: #0a0008; }
+  .wheel.black { background: #000; color: #fff; }
+  .wheel.zero { background: var(--pale); color: #0a0008; }
+  .pay { font-size: 8px; line-height: 2; text-align: left; color: var(--pale); }
+  .pay img { height: 14px; width: 14px; object-fit: contain; vertical-align: middle; }
+  .casino-box { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
   #pauseBtn { position: fixed; right: 10px; top: 46px; width: 38px; height: 38px; padding: 0; display: none; z-index: 5;
     font-size: 14px; letter-spacing: -2px; }
   #toast { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); background: var(--pink); color: var(--bg);
@@ -90,6 +102,7 @@
     <button id="toDaily" class="alt">Задания</button>
     <button id="toShop" class="alt">Магазин</button>
     <button id="toAch" class="alt">Достижения</button>
+    <button id="toCasino" class="alt">Казино</button>
   </div>
   <div class="link" id="toRules">Как играть</div>
 </div></div>
@@ -143,6 +156,39 @@
   <button id="achBack" class="ghost">В меню</button>
 </div></div>
 
+<!-- КАЗИНО -->
+<div class="overlay" id="casino"><div class="inner">
+  <h2>КАЗИНО</h2>
+  <div class="stats"><span id="cCoins"></span></div>
+  <div class="small">Ставка</div>
+  <div class="row-btns" id="chips"></div>
+  <div class="row-btns"><button id="tabSlots">Слоты</button><button id="tabRoul" class="alt">Рулетка</button></div>
+
+  <div class="casino-box" id="slotsBox">
+    <div class="reels"><div class="reel" id="r0"></div><div class="reel" id="r1"></div><div class="reel" id="r2"></div></div>
+    <div class="msg" id="slotMsg">Крути!</div>
+    <button id="spinBtn" class="main">Крутить</button>
+    <div class="pay">
+      <img src="img/dollar.png" alt=""> x3 = x4 &nbsp; <img src="img/redbull.png" alt=""> x3 = x8<br>
+      <img src="img/syringe.png" alt=""> x3 = x20 &nbsp; <img src="img/xanax.png" alt=""> x3 = x50<br>
+      <img src="img/acid0.png" alt=""> x3 = x250 &nbsp; две одинаковые = x0.5
+    </div>
+  </div>
+
+  <div class="casino-box" id="roulBox" style="display:none">
+    <div class="wheel zero" id="wheel">0</div>
+    <div class="msg" id="roulMsg">Выбери цвет</div>
+    <div class="row-btns">
+      <button id="bPink" class="main">Розовое x2</button>
+      <button id="bBlack" class="ghost">Чёрное x2</button>
+      <button id="bZero" class="alt">Зеро x36</button>
+    </div>
+  </div>
+
+  <div class="hint small" style="font-size:8px;line-height:1.8;max-width:320px;opacity:.65">Монеты только игровые, настоящих денег и покупок здесь нет. Казино забирает в среднем больше, чем отдаёт.</div>
+  <button id="casinoBack" class="ghost">В меню</button>
+</div></div>
+
 <!-- ПАУЗА -->
 <div class="overlay" id="pause"><div class="inner">
   <h2>ПАУЗА</h2>
@@ -193,6 +239,7 @@
     totals: { dollar: 0, redbull: 0, syringe: 0, xanax: 0, acid: 0 },
     stamps: [], up: { wide: 0, time: 0, trip: 0, heart: 0 },
     theme: 'city', themes: ['city'], ach: {}, bought: false, dailyAll: 0, daily: null,
+    casino: { spins: 0, biggest: 0, jackpots: 0, zeros: 0 },
   });
   let save = defSave();
   try {
@@ -202,6 +249,7 @@
       save = Object.assign(defSave(), o);
       save.totals = Object.assign(defSave().totals, o.totals || {});
       save.up = Object.assign(defSave().up, o.up || {});
+      save.casino = Object.assign(defSave().casino, o.casino || {});
     } else {
       save.best = parseInt(localStorage.getItem('catch_best') || '0', 10) || 0;
     }
@@ -242,6 +290,11 @@
     { id: 'clean',  name: 'Без царапин',        desc: 'Закончи раунд на 30 секунд без потерь', reward: 120, ok: (s, r) => !!r.noHit },
     { id: 'od',     name: 'Передоз',            desc: 'Поймай передоз',                        reward: 30,  ok: (s, r) => r.od >= 1 },
     { id: 'surv60', name: 'Выживальщик',        desc: 'Продержись 60 с в выживании',           reward: 150, ok: (s, r) => r.mode === 'survival' && r.survTime >= 60 },
+    { id: 'cas1',   name: 'Азарт',              desc: 'Сделай первую ставку в казино',         reward: 20,  ok: (s) => s.casino.spins >= 1 },
+    { id: 'cas50',  name: 'Завсегдатай',        desc: 'Сделай 50 ставок в казино',             reward: 60,  ok: (s) => s.casino.spins >= 50 },
+    { id: 'casbig', name: 'Крупный выигрыш',    desc: 'Выиграй 1000 монет за одну ставку',     reward: 100, ok: (s) => s.casino.biggest >= 1000 },
+    { id: 'jack',   name: 'Джекпот',            desc: 'Выбей три марки в слотах',              reward: 300, ok: (s) => s.casino.jackpots >= 1 },
+    { id: 'zero',   name: 'Зеро',               desc: 'Угадай зеро в рулетке',                 reward: 300, ok: (s) => s.casino.zeros >= 1 },
     { id: 'daily',  name: 'Дисциплина',         desc: 'Выполни все задания дня',               reward: 100, ok: (s) => s.dailyAll >= 1 },
   ];
   const DAILY_T = [
@@ -312,13 +365,14 @@
   const EMPTY_RS = () => ({ counts: {}, acid: 0, stamps: [], maxCombo: 0, boss: false, od: 0, noHit: false, mode: 'classic', survTime: 0, score: 0 });
 
   // ================= ЭКРАНЫ =================
-  const screens = ['menu', 'shop', 'ach', 'daily', 'rules', 'end'];
+  const screens = ['menu', 'shop', 'ach', 'daily', 'rules', 'casino', 'end'];
   function show(name) {
     screens.forEach((n) => $(n).classList.toggle('show', n === name));
     if (name === 'menu') updateMenu();
     if (name === 'shop') renderShop();
     if (name === 'ach') renderAch();
     if (name === 'daily') renderDaily();
+    if (name === 'casino') renderCasino();
   }
   function updateMenu() {
     $('mCoins').textContent = '🪙 ' + save.coins;
@@ -401,6 +455,113 @@
     h += `<div class="card ${save.daily.allGiven ? 'done' : ''}"><div class="t">Бонус за все три</div><div class="r"><span>${save.daily.allGiven ? 'ПОЛУЧЕНО' : 'Выполни все'}</span><span>🪙 50</span></div></div>`;
     $('dailyList').innerHTML = h;
   }
+
+  // ================= КАЗИНО (только игровые монеты) =================
+  const BETS = [10, 50, 100, 250];
+  let bet = 10, casinoBusy = false, casinoTab = 'slots';
+  const SLOT_SYM = [
+    { id: 'dollar',  w: 40, pay: 4 },
+    { id: 'redbull', w: 25, pay: 8 },
+    { id: 'syringe', w: 18, pay: 20 },
+    { id: 'xanax',   w: 12, pay: 50 },
+    { id: 'acid',    w: 5,  pay: 250 },
+  ];
+  const REDS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+  const numColor = (n) => (n === 0 ? 'zero' : REDS.has(n) ? 'pink' : 'black');
+  const symSrc = (id) => id === 'acid' ? 'img/acid' + Math.floor(Math.random() * 10) + '.png' : 'img/' + id + '.png';
+  const rollSym = () => {
+    let r = Math.random() * 100;
+    for (const q of SLOT_SYM) { if ((r -= q.w) < 0) return q.id; }
+    return 'dollar';
+  };
+  const setReel = (i, id) => { $('r' + i).innerHTML = '<img src="' + symSrc(id) + '" alt="">'; };
+
+  function renderCasino() {
+    $('cCoins').textContent = '🪙 ' + save.coins;
+    $('chips').innerHTML = BETS.map((b) => `<button data-bet="${b}" class="${b === bet ? '' : 'alt'}">${b}</button>`).join('');
+    $('slotsBox').style.display = casinoTab === 'slots' ? 'flex' : 'none';
+    $('roulBox').style.display = casinoTab === 'roul' ? 'flex' : 'none';
+    $('tabSlots').className = casinoTab === 'slots' ? '' : 'alt';
+    $('tabRoul').className = casinoTab === 'roul' ? '' : 'alt';
+    if (!$('r0').innerHTML) for (let i = 0; i < 3; i++) setReel(i, ['dollar', 'redbull', 'xanax'][i]);
+  }
+  function casinoFinish(win) {
+    if (win > save.casino.biggest) save.casino.biggest = win;
+    const got = checkAch(EMPTY_RS());
+    persist();
+    $('cCoins').textContent = '🪙 ' + save.coins;
+    if (got.length) toast('Достижение: ' + got[0].name + ' +' + got[0].reward + ' 🪙');
+    casinoBusy = false;
+  }
+  function takeBet() {
+    if (casinoBusy) return false;
+    if (save.coins < bet) { toast('Не хватает монет'); return false; }
+    casinoBusy = true; save.coins -= bet; save.casino.spins++;
+    return true;
+  }
+
+  function spinSlots() {
+    if (!takeBet()) return;
+    const a = [rollSym(), rollSym(), rollSym()];
+    let mult = 0;
+    if (a[0] === a[1] && a[1] === a[2]) mult = SLOT_SYM.find((q) => q.id === a[0]).pay;
+    else if (a[0] === a[1] || a[1] === a[2] || a[0] === a[2]) mult = 0.5;
+    const win = Math.floor(bet * mult);
+    save.coins += win;
+    if (mult >= 250) save.casino.jackpots++;
+    persist();
+    $('slotMsg').textContent = '...';
+    [0, 1, 2].forEach((i) => $('r' + i).classList.remove('win'));
+    const timers = [0, 1, 2].map((i) => setInterval(() => setReel(i, rollSym()), 70));
+    [0, 1, 2].forEach((i) => setTimeout(() => {
+      clearInterval(timers[i]); setReel(i, a[i]); haptic();
+      if (i === 2) {
+        const triple = a[0] === a[1] && a[1] === a[2];
+        if (win > bet || triple) { [0, 1, 2].forEach((k) => $('r' + k).classList.add('win')); haptic('big'); }
+        $('slotMsg').textContent = win > 0 ? (triple ? 'ТРИ В РЯД! +' + win : (win >= bet ? '+' + win : 'Возврат ' + win)) + ' 🪙' : 'Мимо';
+        casinoFinish(win);
+      }
+    }, 700 + i * 450));
+  }
+
+  function spinRoulette(choice) {
+    if (!takeBet()) return;
+    const n = Math.floor(Math.random() * 37);
+    const col = numColor(n);
+    let win = 0;
+    if (choice === 'zero' && n === 0) win = bet * 36;
+    else if (choice !== 'zero' && col === choice) win = bet * 2;
+    save.coins += win;
+    if (choice === 'zero' && n === 0) save.casino.zeros++;
+    persist();
+    $('roulMsg').textContent = '...';
+    const wheel = $('wheel');
+    const steps = 22; let k = 0;
+    const tick = () => {
+      k++;
+      const v = k >= steps ? n : Math.floor(Math.random() * 37);
+      wheel.textContent = v; wheel.className = 'wheel ' + numColor(v);
+      if (k >= steps) {
+        $('roulMsg').textContent = win > 0 ? 'ВЫИГРЫШ +' + win + ' 🪙' : 'Мимо';
+        if (win > 0) haptic('big'); else haptic();
+        casinoFinish(win);
+      } else { haptic(); setTimeout(tick, 60 + k * k * 1.1); }
+    };
+    tick();
+  }
+
+  $('chips').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-bet]'); if (!b) return;
+    bet = parseInt(b.dataset.bet, 10); renderCasino();
+  });
+  $('tabSlots').addEventListener('click', () => { casinoTab = 'slots'; renderCasino(); });
+  $('tabRoul').addEventListener('click', () => { casinoTab = 'roul'; renderCasino(); });
+  $('spinBtn').addEventListener('click', spinSlots);
+  $('bPink').addEventListener('click', () => spinRoulette('pink'));
+  $('bBlack').addEventListener('click', () => spinRoulette('black'));
+  $('bZero').addEventListener('click', () => spinRoulette('zero'));
+  $('casinoBack').addEventListener('click', () => { if (!casinoBusy) show('menu'); });
+  $('toCasino').addEventListener('click', () => show('casino'));
 
   // ================= ИГРА: ХОЛСТ =================
   const cv = $('c');
